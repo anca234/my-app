@@ -44,7 +44,7 @@ export default function AuthPage() {
               type="email"
               placeholder="Enter your email"
               required
-              className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-800 transition-all placeholder:text-zinc-400"
+              className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-800 transition-all placeholder:text-zinc-400 text-zinc-900" 
             />
           </div>
 
@@ -59,10 +59,10 @@ export default function AuthPage() {
             <div className="relative">
               <input
                 id="password"
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? "text" : "password"} // Pastikan tipe ini tetap dinamis
                 placeholder="Enter your password"
                 required
-                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-800 transition-all placeholder:text-zinc-400 pr-12"
+                className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-800 transition-all placeholder:text-zinc-400 pr-12 text-zinc-900"
               />
               
               {/* Tombol Mata (Show/Hide) */}

@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tambahkan ini untuk memastikan background halaman selalu mengikuti warna desain kita */
+/* Background hitam sesuai desain */
 body {
-  background-color: #18181b; 
+  background-color: #18181b;
+  color: white;
 }
