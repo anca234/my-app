@@ -1,5 +1,5 @@
 "use client";
-
+import ComposeModal from "../components/ComposeModal"; // Sesuaikan path foldernya
 import { useState } from "react";
 import { 
   Menu, Search, User, Pencil, Inbox, Star, Send, 
@@ -22,13 +22,17 @@ const DUMMY_EMAILS = [
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("Inbox");
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
   
   // State untuk Mengatur Sidebar (Buka/Tutup)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
     <div className="flex h-screen w-full bg-[#18181b] text-zinc-300 font-sans overflow-hidden">
-      
+        <ComposeModal 
+        isOpen={isComposeOpen} 
+        onClose={() => setIsComposeOpen(false)} 
+        />
       {/* === SIDEBAR (KIRI) === */}
       <aside 
         className={`
@@ -55,7 +59,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Tombol Compose */}
-        <button 
+       <button 
+          onClick={() => setIsComposeOpen(true)} // <-- Fungsi klik ditaruh di sini
           className={`
             flex items-center bg-white text-zinc-900 font-semibold mb-6 hover:bg-zinc-200 transition-all shadow-lg
             ${isSidebarOpen ? 'gap-3 px-6 py-4 rounded-2xl mx-0' : 'justify-center p-3 rounded-xl w-12 h-12'}
