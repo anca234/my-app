@@ -45,7 +45,7 @@ export default function ComposeModal({ isOpen, onClose, onSend }: ComposeModalPr
           bg-white shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ease-in-out
           ${isMinimized 
             ? 'w-[280px] h-[48px] rounded-t-lg pointer-events-auto cursor-pointer border border-zinc-300' 
-            : 'w-[900px] h-[700px] rounded-xl animate-in fade-in zoom-in'
+            : 'w-[900px] h-[500px] rounded-xl animate-in fade-in zoom-in'
           }
         `}
       >
