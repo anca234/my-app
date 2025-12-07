@@ -1,16 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function AuthPage() {
+  const router = useRouter(); 
+
   const [isLogin, setIsLogin] = useState(true);
-  
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted in mode:", isLogin ? "Login" : "Register");
+    
+    console.log("Form submitted. Redirecting...");
+
+    router.push("/dashboard"); 
   };
 
   return (
@@ -25,10 +30,7 @@ export default function AuthPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           
           <div className="space-y-1.5">
-            <label 
-              htmlFor="email" 
-              className="block text-sm font-medium text-zinc-900"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-zinc-900">
               Email
             </label>
             <input
@@ -36,15 +38,12 @@ export default function AuthPage() {
               type="email"
               placeholder="Enter your email"
               required
-              className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-800 transition-all placeholder:text-zinc-400 text-zinc-900" 
+              className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-800 transition-all placeholder:text-zinc-400 text-zinc-900"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label 
-              htmlFor="password" 
-              className="block text-sm font-medium text-zinc-900"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-zinc-900">
               Password
             </label>
             <div className="relative">
@@ -55,17 +54,12 @@ export default function AuthPage() {
                 required
                 className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-800 transition-all placeholder:text-zinc-400 pr-12 text-zinc-900"
               />
-              
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-700 p-1"
               >
-                {showPassword ? (
-                  <EyeOff size={20} />
-                ) : (
-                  <Eye size={20} />
-                )}
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>

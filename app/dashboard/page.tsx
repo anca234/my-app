@@ -5,12 +5,13 @@ import {
   Menu, Search, User, Pencil, Inbox, Star, Send, 
   ArrowLeft, Archive, Trash2, Mail, MoreVertical, Reply, Forward 
 } from "lucide-react";
-
 import ComposeModal from "../components/ComposeModal"; 
 
-const DUMMY_EMAILS = [
+const INITIAL_DATA = [
   { 
     id: 1, 
+    folder: "inbox", 
+    isStarred: false, 
     sender: "Vercel Security", 
     email: "security@vercel.com",
     title: "Important Security Update for Next.js 15 & 16", 
@@ -21,6 +22,8 @@ const DUMMY_EMAILS = [
   },
   { 
     id: 2, 
+    folder: "inbox",
+    isStarred: true,
     sender: "P.A.I.M.O.N", 
     email: "paimon@hoyoverse.com",
     title: "Welcome to Version Luna III: Get a new outfit for free!", 
@@ -31,6 +34,8 @@ const DUMMY_EMAILS = [
   },
   { 
     id: 3, 
+    folder: "inbox",
+    isStarred: false,
     sender: "LinkedIn", 
     email: "jobs-listings@linkedin.com",
     title: "Orang Tua Group recently posted", 
@@ -41,6 +46,8 @@ const DUMMY_EMAILS = [
   },
   { 
     id: 4, 
+    folder: "inbox",
+    isStarred: false,
     sender: "GitHub", 
     email: "notifications@github.com",
     title: "[frontend-bootcamp] Pull Request #45 Merged", 
@@ -51,6 +58,8 @@ const DUMMY_EMAILS = [
   },
   { 
     id: 5, 
+    folder: "inbox",
+    isStarred: true, 
     sender: "Tokopedia", 
     email: "no-reply@tokopedia.com",
     title: "Pembayaran Berhasil: Invoice INV/2025/12/01/XX", 
@@ -61,6 +70,8 @@ const DUMMY_EMAILS = [
   },
   { 
     id: 6, 
+    folder: "inbox",
+    isStarred: false,
     sender: "Spotify", 
     email: "hello@spotify.com",
     title: "Your 2025 Wrapped is here! 🎧", 
@@ -71,6 +82,8 @@ const DUMMY_EMAILS = [
   },
   { 
     id: 7, 
+    folder: "inbox",
+    isStarred: false,
     sender: "Dribbble", 
     email: "digest@dribbble.com",
     title: "10 New Design Trends for 2026", 
@@ -81,6 +94,8 @@ const DUMMY_EMAILS = [
   },
   { 
     id: 8, 
+    folder: "inbox",
+    isStarred: false,
     sender: "Zoom", 
     email: "meetings@zoom.us",
     title: "Invitation: Sprint Planning - Week 4", 
@@ -91,6 +106,8 @@ const DUMMY_EMAILS = [
   },
   { 
     id: 9, 
+    folder: "inbox",
+    isStarred: false,
     sender: "Medium Daily Digest", 
     email: "noreply@medium.com",
     title: "Why React Server Components change everything", 
@@ -101,6 +118,8 @@ const DUMMY_EMAILS = [
   },
   { 
     id: 10, 
+    folder: "inbox",
+    isStarred: false,
     sender: "Team Trello", 
     email: "do-not-reply@trello.com",
     title: "Card moved: 'Fix Navbar Bug' to 'Done'", 
@@ -115,58 +134,77 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("Inbox");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
-
   const [selectedEmail, setSelectedEmail] = useState<any | null>(null);
+
+  const [emails, setEmails] = useState(INITIAL_DATA);
+
+  const handleSendEmail = (data: { to: string; subject: string; body: string }) => {
+    const newEmail = {
+      id: Date.now(),
+      folder: "sent",
+      isStarred: false,
+      sender: "Me",
+      email: "me@gmailclone.com",
+      title: data.subject || "(No Subject)",
+      snippet: `To: ${data.to} - ${data.body.substring(0, 40)}...`, 
+      body: `To: ${data.to}\n\n${data.body}`,
+      date: "Just now",
+      isRead: true
+    };
+
+    setEmails([newEmail, ...emails]);
+  };
+
+  const toggleStar = (emailId: number) => {
+    setEmails((prevEmails) => 
+      prevEmails.map((email) => 
+        email.id === emailId 
+          ? { ...email, isStarred: !email.isStarred }
+          : email
+      )
+    );
+  };
+
+  const displayedEmails = emails.filter((email) => {
+    if (activeTab === "Inbox") return email.folder === "inbox";
+    if (activeTab === "Sent") return email.folder === "sent";
+    if (activeTab === "Starred") return email.isStarred === true;
+    return false;
+  });
 
   return (
     <div className="flex h-screen w-full bg-[#18181b] text-zinc-300 font-sans overflow-hidden">
       
       <ComposeModal 
         isOpen={isComposeOpen} 
-        onClose={() => setIsComposeOpen(false)} 
+        onClose={() => setIsComposeOpen(false)}
+        onSend={handleSendEmail} 
       />
 
-      <aside 
-        className={`
-          flex-shrink-0 flex flex-col bg-[#1E1E20] border-r border-zinc-800 transition-all duration-300 ease-in-out
-          ${isSidebarOpen ? 'w-64 p-4' : 'w-[72px] py-4 px-2 items-center'}
-        `}
-      >
+      <aside className={`flex-shrink-0 flex flex-col bg-[#1E1E20] border-r border-zinc-800 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-64 p-4' : 'w-[72px] py-4 px-2 items-center'}`}>
         <div className={`flex items-center mb-6 ${isSidebarOpen ? 'px-4 gap-3' : 'justify-center'}`}>
-          <button 
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-            className="p-2 hover:bg-zinc-700 rounded-full transition-colors"
-          >
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 hover:bg-zinc-700 rounded-full transition-colors">
             <Menu className="text-zinc-400 hover:text-white" />
           </button>
-          {isSidebarOpen && (
-            <span className="text-xl font-semibold text-white tracking-wide transition-opacity duration-300">
-              LOGO
-            </span>
-          )}
+          {isSidebarOpen && <span className="text-xl font-semibold text-white tracking-wide">LOGO</span>}
         </div>
 
         <button 
           onClick={() => setIsComposeOpen(true)}
-          className={`
-            flex items-center bg-white text-zinc-900 font-semibold mb-6 hover:bg-zinc-200 transition-all shadow-lg
-            ${isSidebarOpen ? 'gap-3 px-6 py-4 rounded-2xl mx-0' : 'justify-center p-3 rounded-xl w-12 h-12'}
-          `}
+          className={`flex items-center bg-white text-zinc-900 font-semibold mb-6 hover:bg-zinc-200 transition-all shadow-lg ${isSidebarOpen ? 'gap-3 px-6 py-4 rounded-2xl mx-0' : 'justify-center p-3 rounded-xl w-12 h-12'}`}
         >
           <Pencil size={20} />
           {isSidebarOpen && <span>Compose</span>}
         </button>
 
         <nav className="flex flex-col gap-1 w-full">
-          <NavItem icon={<Inbox size={20} />} label="Inbox" isActive={activeTab === "Inbox"} onClick={() => {setActiveTab("Inbox"); setSelectedEmail(null)}} count={3} isOpen={isSidebarOpen} />
+          <NavItem icon={<Inbox size={20} />} label="Inbox" isActive={activeTab === "Inbox"} onClick={() => {setActiveTab("Inbox"); setSelectedEmail(null)}} count={emails.filter(e => e.folder === 'inbox' && !e.isRead).length} isOpen={isSidebarOpen} />
           <NavItem icon={<Star size={20} />} label="Starred" isActive={activeTab === "Starred"} onClick={() => {setActiveTab("Starred"); setSelectedEmail(null)}} isOpen={isSidebarOpen} />
           <NavItem icon={<Send size={20} />} label="Sent" isActive={activeTab === "Sent"} onClick={() => {setActiveTab("Sent"); setSelectedEmail(null)}} isOpen={isSidebarOpen} />
         </nav>
       </aside>
 
-
       <main className="flex-1 flex flex-col min-w-0 bg-[#121212]">
-        
         <header className="h-16 flex items-center justify-between px-4 py-2 bg-[#121212] border-b border-zinc-800">
           <div className="flex items-center flex-1 max-w-3xl bg-[#2D2D30] rounded-full px-4 py-3 mx-4">
             <Search size={20} className="text-zinc-400 mr-3" />
@@ -178,25 +216,24 @@ export default function DashboardPage() {
         </header>
 
         <div className="flex-1 overflow-y-auto">
-          
           {selectedEmail ? (
-            
             <div className="flex flex-col h-full bg-[#121212]">
               <div className="flex items-center px-4 py-3 border-b border-zinc-800 gap-4 text-zinc-400">
-                <button onClick={() => setSelectedEmail(null)} className="hover:text-white p-2 hover:bg-zinc-800 rounded-full transition-colors" title="Back to Inbox">
-                  <ArrowLeft size={20} />
-                </button>
+                <button onClick={() => setSelectedEmail(null)} className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><ArrowLeft size={20} /></button>
                 <div className="h-6 w-[1px] bg-zinc-700 mx-1"></div>
                 <button className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><Archive size={18} /></button>
                 <button className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><Trash2 size={18} /></button>
-                <button className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><Mail size={18} /></button>
-                <div className="flex-1"></div>
-                <button className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><MoreVertical size={18} /></button>
               </div>
-
               <div className="p-8 max-w-4xl mx-auto w-full">
-                <h1 className="text-2xl text-white mb-8 font-normal">{selectedEmail.title}</h1>
-                
+                <div className="flex justify-between items-start mb-8">
+                  <h1 className="text-2xl text-white font-normal flex-1">{selectedEmail.title}</h1>
+                  <button onClick={() => toggleStar(selectedEmail.id)}>
+                    <Star 
+                      size={24} 
+                      className={selectedEmail.isStarred ? "text-yellow-400 fill-yellow-400" : "text-zinc-500 hover:text-zinc-300"} 
+                    />
+                  </button>
+                </div>
                 <div className="flex items-start justify-between mb-8">
                   <div className="flex gap-4">
                     <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
@@ -205,69 +242,54 @@ export default function DashboardPage() {
                     <div>
                       <div className="flex items-baseline gap-2">
                         <span className="text-white font-bold text-sm">{selectedEmail.sender}</span>
-                        <span className="text-zinc-500 text-xs">&lt;{selectedEmail.email || "email@example.com"}&gt;</span>
+                        <span className="text-zinc-500 text-xs">&lt;{selectedEmail.email}&gt;</span>
                       </div>
                       <div className="text-zinc-500 text-xs mt-0.5">to me</div>
                     </div>
                   </div>
                   <span className="text-zinc-500 text-xs">{selectedEmail.date}</span>
                 </div>
-
                 <div className="text-zinc-300 whitespace-pre-line leading-relaxed text-sm">
-                  {selectedEmail.body || "No content available for this dummy email."}
-                </div>
-
-                <div className="mt-10 flex gap-4">
-                   <button className="flex items-center gap-2 border border-zinc-600 text-zinc-400 px-6 py-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors">
-                      <Reply size={16} /> Reply
-                   </button>
-                   <button className="flex items-center gap-2 border border-zinc-600 text-zinc-400 px-6 py-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors">
-                      <Forward size={16} /> Forward
-                   </button>
+                  {selectedEmail.body}
                 </div>
               </div>
             </div>
-
           ) : (
-            
             <div>
-              {activeTab === "Inbox" ? (
-                DUMMY_EMAILS.map((mail) => (
+              {displayedEmails.length > 0 ? (
+                displayedEmails.map((mail) => (
                   <div 
                     key={mail.id} 
                     onClick={() => setSelectedEmail(mail)}
-                    className={`
-                      group flex items-center gap-4 px-4 py-3 border-b border-zinc-800 cursor-pointer 
-                      hover:bg-[#1f1f22] hover:shadow-md transition-all
-                      ${!mail.isRead ? 'bg-[#18181b] text-white font-semibold' : 'bg-[#121212] text-zinc-400'}
-                    `}
+                    className={`group flex items-center gap-4 px-4 py-3 border-b border-zinc-800 cursor-pointer hover:bg-[#1f1f22] hover:shadow-md transition-all ${!mail.isRead ? 'bg-[#18181b] text-white font-semibold' : 'bg-[#121212] text-zinc-400'}`}
                   >
-                    <div className="flex items-center gap-3 text-zinc-500" onClick={(e) => e.stopPropagation()}>
-                      <input type="checkbox" className="w-4 h-4 border-zinc-600 rounded bg-transparent accent-zinc-500" />
-                      <Star size={18} className="hover:text-yellow-500 cursor-pointer" />
+                    <div 
+                      className="flex items-center gap-3 text-zinc-500" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleStar(mail.id);
+                      }}
+                    >
+                      <input type="checkbox" className="w-4 h-4 border-zinc-600 rounded bg-transparent accent-zinc-500" onClick={(e) => e.stopPropagation()} />
+                      <Star 
+                        size={18} 
+                        className={`cursor-pointer transition-colors ${mail.isStarred ? 'text-yellow-400 fill-yellow-400' : 'hover:text-zinc-300'}`} 
+                      />
                     </div>
-
-                    <div className={`w-48 truncate ${!mail.isRead ? 'text-white' : 'text-zinc-300'}`}>
-                      {mail.sender}
-                    </div>
-
+                    <div className={`w-48 truncate ${!mail.isRead ? 'text-white' : 'text-zinc-300'}`}>{mail.sender}</div>
                     <div className="flex-1 truncate">
                       <span className={!mail.isRead ? 'text-white' : 'text-zinc-300'}>{mail.title}</span>
                       <span className="text-zinc-500 ml-2">- {mail.snippet}</span>
                     </div>
-
-                    <div className={`text-xs w-20 text-right ${!mail.isRead ? 'text-white font-bold' : 'text-zinc-500'}`}>
-                      {mail.date}
-                    </div>
+                    <div className={`text-xs w-20 text-right ${!mail.isRead ? 'text-white font-bold' : 'text-zinc-500'}`}>{mail.date}</div>
                   </div>
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center h-[500px] text-zinc-500">
                   <div className="bg-zinc-800 p-6 rounded-full mb-4">
-                     {activeTab === "Starred" ? <Star size={40} /> : <Send size={40} />}
+                     {activeTab === "Starred" ? <Star size={40} /> : (activeTab === "Sent" ? <Send size={40} /> : <Inbox size={40} />)}
                   </div>
-                  <p className="text-lg">Your {activeTab} is empty.</p>
-                  <p className="text-sm text-zinc-600">No messages to show here.</p>
+                  <p className="text-lg">No emails in {activeTab}</p>
                 </div>
               )}
             </div>
@@ -280,20 +302,12 @@ export default function DashboardPage() {
 
 function NavItem({ icon, label, isActive, onClick, count, isOpen }: any) {
   return (
-    <div 
-      onClick={onClick}
-      className={`
-        flex items-center cursor-pointer transition-all duration-200
-        ${isOpen ? 'px-6 py-2 rounded-r-full mr-4 justify-between' : 'justify-center py-3 w-12 h-12 rounded-full mx-auto'}
-        ${isActive ? 'bg-[#36373A] text-white font-bold' : 'text-zinc-400 hover:bg-[#2b2b2e]'}
-      `}
-      title={!isOpen ? label : ""}
-    >
+    <div onClick={onClick} className={`flex items-center cursor-pointer transition-all duration-200 ${isOpen ? 'px-6 py-2 rounded-r-full mr-4 justify-between' : 'justify-center py-3 w-12 h-12 rounded-full mx-auto'} ${isActive ? 'bg-[#36373A] text-white font-bold' : 'text-zinc-400 hover:bg-[#2b2b2e]'}`} title={!isOpen ? label : ""}>
       <div className={`flex items-center ${isOpen ? 'gap-4' : ''}`}>
         {icon}
         {isOpen && <span>{label}</span>}
       </div>
-      {isOpen && count && <span className="text-xs font-bold">{count}</span>}
+      {isOpen && count > 0 && <span className="text-xs font-bold">{count}</span>}
     </div>
   )
 }
