@@ -1,47 +1,137 @@
 "use client";
-import ComposeModal from "../components/ComposeModal"; // Sesuaikan path foldernya
+
 import { useState } from "react";
 import { 
   Menu, Search, User, Pencil, Inbox, Star, Send, 
-  File, MoreVertical, ChevronLeft, ChevronRight 
+  ArrowLeft, Archive, Trash2, Mail, MoreVertical, Reply, Forward 
 } from "lucide-react";
 
-// Data Dummy (Sama seperti sebelumnya)
+import ComposeModal from "../components/ComposeModal"; 
+
 const DUMMY_EMAILS = [
-  { id: 1, sender: "Vercel Security", title: "Important Security Update for Next.js 15 & 16", snippet: "Patch now available to address vulnerability...", date: "6:33 AM", isRead: false },
-  { id: 2, sender: "P.A.I.M.O.N", title: "Welcome to Version Luna III: Get a new outfit for free!", snippet: "The new dual-combat form character 'Durin'...", date: "11:55 PM", isRead: false },
-  { id: 3, sender: "Enrichment Socs", title: "[Mandatory Event] Workshop Activity - Speak Forward", snippet: "Hello Future Leaders! Ever wondered how to tackle...", date: "Dec 3", isRead: false },
-  { id: 4, sender: "LinkedIn", title: "Orang Tua Group recently posted", snippet: "Creative mind line up! we are searching for your talent...", date: "Dec 1", isRead: true },
-  { id: 5, sender: "LinkedIn", title: "GDP Labs recently posted", snippet: "We're Hiring! 🚀 Join GDP Labs and Help Build...", date: "Nov 30", isRead: true },
-  { id: 6, sender: "Google", title: "Notifikasi keamanan penting", snippet: "Beberapa sandi tersimpan Anda terekspos...", date: "Nov 29", isRead: true },
-  { id: 7, sender: "Bill Gates via Link.", title: "These were some of my favorite books from 2025", snippet: "The holidays are almost here...", date: "Nov 29", isRead: true },
-  { id: 8, sender: "Career Newsletter", title: "Career Newsletter November Vol. 3/2025", snippet: "Hallo BINUSIAN, Kabar gembira buat kalian...", date: "Nov 28", isRead: true },
-  { id: 9, sender: "Academia.edu", title: "Updated Terms of Use and Privacy Policy", snippet: "Academia.edu Accelerate your research...", date: "Nov 27", isRead: true },
-  { id: 10, sender: "BLIBLI", title: "Michael, Jangan Lupa Gunakan Voucher-mu!", snippet: "Halo Michael! Kamu masih punya voucher...", date: "Nov 27", isRead: true },
+  { 
+    id: 1, 
+    sender: "Vercel Security", 
+    email: "security@vercel.com",
+    title: "Important Security Update for Next.js 15 & 16", 
+    snippet: "Patch now available to address vulnerability...", 
+    body: "Hello User,\n\nWe have released a critical security patch for Next.js versions 15 and 16. Please update your project immediately to ensure the safety of your application.\n\nRun 'npm install next@latest' to update.\n\nBest,\nVercel Security Team",
+    date: "6:33 AM", 
+    isRead: false 
+  },
+  { 
+    id: 2, 
+    sender: "P.A.I.M.O.N", 
+    email: "paimon@hoyoverse.com",
+    title: "Welcome to Version Luna III: Get a new outfit for free!", 
+    snippet: "The new dual-combat form character 'Durin'...", 
+    body: "Traveler! \n\nPaimon has great news! Version Luna III is finally here. Log in now to claim your free outfit and 1600 Primogems.\n\nSee you in Teyvat!",
+    date: "11:55 PM", 
+    isRead: false 
+  },
+  { 
+    id: 3, 
+    sender: "LinkedIn", 
+    email: "jobs-listings@linkedin.com",
+    title: "Orang Tua Group recently posted", 
+    snippet: "Creative mind line up! we are searching for your talent...", 
+    body: "Hi there,\n\nBased on your profile, we think you might be a good fit for this position at Orang Tua Group.\n\nApply now before it closes.",
+    date: "Dec 1", 
+    isRead: true 
+  },
+  { 
+    id: 4, 
+    sender: "GitHub", 
+    email: "notifications@github.com",
+    title: "[frontend-bootcamp] Pull Request #45 Merged", 
+    snippet: "budi-santoso merged 3 commits into main...", 
+    body: "Hello,\n\nThe pull request #45 'Fix: Login page responsiveness' has been successfully merged into 'main' by Budi Santoso.\n\nView the changes on GitHub.\n\nCheers,\nGitHub Team",
+    date: "Dec 1", 
+    isRead: true 
+  },
+  { 
+    id: 5, 
+    sender: "Tokopedia", 
+    email: "no-reply@tokopedia.com",
+    title: "Pembayaran Berhasil: Invoice INV/2025/12/01/XX", 
+    snippet: "Hore! Pembayaranmu telah dikonfirmasi. Penjual akan segera...", 
+    body: "Halo Michael,\n\nPembayaran untuk pesanan 'Mechanical Keyboard Keychron K2' telah berhasil diverifikasi. Penjual memiliki waktu 2x24 jam untuk mengirimkan pesananmu.\n\nCek status pesananmu di aplikasi Tokopedia.",
+    date: "Nov 30", 
+    isRead: true 
+  },
+  { 
+    id: 6, 
+    sender: "Spotify", 
+    email: "hello@spotify.com",
+    title: "Your 2025 Wrapped is here! 🎧", 
+    snippet: "See what you listened to most this year. It might surprise you...", 
+    body: "It's that time of the year again!\n\nYour 2025 Wrapped is ready. Find out your top songs, top artists, and how many minutes you spent listening to music this year.\n\n#SpotifyWrapped",
+    date: "Nov 29", 
+    isRead: false 
+  },
+  { 
+    id: 7, 
+    sender: "Dribbble", 
+    email: "digest@dribbble.com",
+    title: "10 New Design Trends for 2026", 
+    snippet: "Glassmorphism is out, Claymorphism is in? See what's trending...", 
+    body: "Hey Designer,\n\nStay ahead of the curve with these emerging design trends for the upcoming year. We've curated the best shots from top designers around the world.\n\nRead the full article on our blog.",
+    date: "Nov 28", 
+    isRead: true 
+  },
+  { 
+    id: 8, 
+    sender: "Zoom", 
+    email: "meetings@zoom.us",
+    title: "Invitation: Sprint Planning - Week 4", 
+    snippet: "You have been invited to a scheduled Zoom meeting...", 
+    body: "Topic: Sprint Planning - Week 4\nTime: Dec 7, 2025 10:00 AM Jakarta\n\nJoin Zoom Meeting\nhttps://zoom.us/j/123456789\n\nMeeting ID: 123 456 789\nPasscode: 12345",
+    date: "Nov 28", 
+    isRead: true 
+  },
+  { 
+    id: 9, 
+    sender: "Medium Daily Digest", 
+    email: "noreply@medium.com",
+    title: "Why React Server Components change everything", 
+    snippet: "Dan Abramov just published a new story that you might like...", 
+    body: "Top stories for you today:\n\n1. Why React Server Components change everything\n2. How to center a Div in 2025\n3. The end of Create React App\n\nRead more on Medium.",
+    date: "Nov 27", 
+    isRead: true 
+  },
+  { 
+    id: 10, 
+    sender: "Team Trello", 
+    email: "do-not-reply@trello.com",
+    title: "Card moved: 'Fix Navbar Bug' to 'Done'", 
+    snippet: "Siti just moved a card in board 'Project Alpha'...", 
+    body: "Activity on board Project Alpha:\n\nSiti moved card 'Fix Navbar Bug' from list 'In Progress' to list 'Done'.\n\nKeep up the good work!",
+    date: "Nov 26", 
+    isRead: true 
+  },
 ];
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("Inbox");
-  const [isComposeOpen, setIsComposeOpen] = useState(false);
-  
-  // State untuk Mengatur Sidebar (Buka/Tutup)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
+
+  const [selectedEmail, setSelectedEmail] = useState<any | null>(null);
 
   return (
     <div className="flex h-screen w-full bg-[#18181b] text-zinc-300 font-sans overflow-hidden">
-        <ComposeModal 
+      
+      <ComposeModal 
         isOpen={isComposeOpen} 
         onClose={() => setIsComposeOpen(false)} 
-        />
-      {/* === SIDEBAR (KIRI) === */}
+      />
+
       <aside 
         className={`
           flex-shrink-0 flex flex-col bg-[#1E1E20] border-r border-zinc-800 transition-all duration-300 ease-in-out
           ${isSidebarOpen ? 'w-64 p-4' : 'w-[72px] py-4 px-2 items-center'}
         `}
       >
-        
-        {/* Header Sidebar (Menu & Logo) */}
         <div className={`flex items-center mb-6 ${isSidebarOpen ? 'px-4 gap-3' : 'justify-center'}`}>
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
@@ -49,8 +139,6 @@ export default function DashboardPage() {
           >
             <Menu className="text-zinc-400 hover:text-white" />
           </button>
-          
-          {/* Logo hanya muncul jika sidebar terbuka */}
           {isSidebarOpen && (
             <span className="text-xl font-semibold text-white tracking-wide transition-opacity duration-300">
               LOGO
@@ -58,131 +146,153 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Tombol Compose */}
-       <button 
-          onClick={() => setIsComposeOpen(true)} // <-- Fungsi klik ditaruh di sini
+        <button 
+          onClick={() => setIsComposeOpen(true)}
           className={`
             flex items-center bg-white text-zinc-900 font-semibold mb-6 hover:bg-zinc-200 transition-all shadow-lg
             ${isSidebarOpen ? 'gap-3 px-6 py-4 rounded-2xl mx-0' : 'justify-center p-3 rounded-xl w-12 h-12'}
           `}
         >
           <Pencil size={20} />
-          {/* Teks Compose hilang jika sidebar tertutup */}
           {isSidebarOpen && <span>Compose</span>}
         </button>
 
-        {/* Menu Navigasi */}
         <nav className="flex flex-col gap-1 w-full">
-          <NavItem 
-            icon={<Inbox size={20} />} 
-            label="Inbox" 
-            isActive={activeTab === "Inbox"} 
-            onClick={() => setActiveTab("Inbox")} 
-            count={3} 
-            isOpen={isSidebarOpen} // Kirim props status sidebar
-          />
-          <NavItem 
-            icon={<Star size={20} />} 
-            label="Starred" 
-            isActive={activeTab === "Starred"} 
-            onClick={() => setActiveTab("Starred")} 
-            isOpen={isSidebarOpen}
-          />
-          <NavItem 
-            icon={<Send size={20} />} 
-            label="Sent" 
-            isActive={activeTab === "Sent"} 
-            onClick={() => setActiveTab("Sent")} 
-            isOpen={isSidebarOpen}
-          />
+          <NavItem icon={<Inbox size={20} />} label="Inbox" isActive={activeTab === "Inbox"} onClick={() => {setActiveTab("Inbox"); setSelectedEmail(null)}} count={3} isOpen={isSidebarOpen} />
+          <NavItem icon={<Star size={20} />} label="Starred" isActive={activeTab === "Starred"} onClick={() => {setActiveTab("Starred"); setSelectedEmail(null)}} isOpen={isSidebarOpen} />
+          <NavItem icon={<Send size={20} />} label="Sent" isActive={activeTab === "Sent"} onClick={() => {setActiveTab("Sent"); setSelectedEmail(null)}} isOpen={isSidebarOpen} />
         </nav>
       </aside>
 
 
-      {/* === MAIN CONTENT (KANAN) === */}
       <main className="flex-1 flex flex-col min-w-0 bg-[#121212]">
         
-        {/* Header Atas */}
-        <header className="h-16 flex items-center justify-between px-4 py-2 bg-[#121212]">
-          
-          {/* Search Bar */}
+        <header className="h-16 flex items-center justify-between px-4 py-2 bg-[#121212] border-b border-zinc-800">
           <div className="flex items-center flex-1 max-w-3xl bg-[#2D2D30] rounded-full px-4 py-3 mx-4">
             <Search size={20} className="text-zinc-400 mr-3" />
-            <input 
-              type="text" 
-              placeholder="Search mail" 
-              className="bg-transparent border-none outline-none text-white w-full placeholder:text-zinc-500"
-            />
+            <input type="text" placeholder={`Search in ${activeTab}`} className="bg-transparent border-none outline-none text-white w-full placeholder:text-zinc-500" />
           </div>
-
-          {/* Profile Avatar */}
           <div className="w-10 h-10 rounded-full bg-zinc-600 flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-zinc-500">
              <User className="text-zinc-300" size={20} />
           </div>
         </header>
 
-        {/* Daftar Email */}
         <div className="flex-1 overflow-y-auto">
-          {DUMMY_EMAILS.map((mail) => (
-            <div 
-              key={mail.id} 
-              className={`
-                group flex items-center gap-4 px-4 py-3 border-b border-zinc-800 cursor-pointer 
-                hover:bg-[#1f1f22] hover:shadow-md transition-all
-                ${!mail.isRead ? 'bg-[#18181b] text-white font-semibold' : 'bg-[#121212] text-zinc-400'}
-              `}
-            >
-              <div className="flex items-center gap-3 text-zinc-500">
-                <input type="checkbox" className="w-4 h-4 border-zinc-600 rounded bg-transparent accent-zinc-500" />
-                <Star size={18} className="hover:text-yellow-500 cursor-pointer" />
+          
+          {selectedEmail ? (
+            
+            <div className="flex flex-col h-full bg-[#121212]">
+              <div className="flex items-center px-4 py-3 border-b border-zinc-800 gap-4 text-zinc-400">
+                <button onClick={() => setSelectedEmail(null)} className="hover:text-white p-2 hover:bg-zinc-800 rounded-full transition-colors" title="Back to Inbox">
+                  <ArrowLeft size={20} />
+                </button>
+                <div className="h-6 w-[1px] bg-zinc-700 mx-1"></div>
+                <button className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><Archive size={18} /></button>
+                <button className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><Trash2 size={18} /></button>
+                <button className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><Mail size={18} /></button>
+                <div className="flex-1"></div>
+                <button className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><MoreVertical size={18} /></button>
               </div>
 
-              <div className={`w-48 truncate ${!mail.isRead ? 'text-white' : 'text-zinc-300'}`}>
-                {mail.sender}
-              </div>
+              <div className="p-8 max-w-4xl mx-auto w-full">
+                <h1 className="text-2xl text-white mb-8 font-normal">{selectedEmail.title}</h1>
+                
+                <div className="flex items-start justify-between mb-8">
+                  <div className="flex gap-4">
+                    <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                      {selectedEmail.sender.charAt(0)}
+                    </div>
+                    <div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-white font-bold text-sm">{selectedEmail.sender}</span>
+                        <span className="text-zinc-500 text-xs">&lt;{selectedEmail.email || "email@example.com"}&gt;</span>
+                      </div>
+                      <div className="text-zinc-500 text-xs mt-0.5">to me</div>
+                    </div>
+                  </div>
+                  <span className="text-zinc-500 text-xs">{selectedEmail.date}</span>
+                </div>
 
-              <div className="flex-1 truncate">
-                <span className={!mail.isRead ? 'text-white' : 'text-zinc-300'}>{mail.title}</span>
-                <span className="text-zinc-500 ml-2">- {mail.snippet}</span>
-              </div>
+                <div className="text-zinc-300 whitespace-pre-line leading-relaxed text-sm">
+                  {selectedEmail.body || "No content available for this dummy email."}
+                </div>
 
-              <div className={`text-xs w-20 text-right ${!mail.isRead ? 'text-white font-bold' : 'text-zinc-500'}`}>
-                {mail.date}
+                <div className="mt-10 flex gap-4">
+                   <button className="flex items-center gap-2 border border-zinc-600 text-zinc-400 px-6 py-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors">
+                      <Reply size={16} /> Reply
+                   </button>
+                   <button className="flex items-center gap-2 border border-zinc-600 text-zinc-400 px-6 py-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors">
+                      <Forward size={16} /> Forward
+                   </button>
+                </div>
               </div>
-
             </div>
-          ))}
+
+          ) : (
+            
+            <div>
+              {activeTab === "Inbox" ? (
+                DUMMY_EMAILS.map((mail) => (
+                  <div 
+                    key={mail.id} 
+                    onClick={() => setSelectedEmail(mail)}
+                    className={`
+                      group flex items-center gap-4 px-4 py-3 border-b border-zinc-800 cursor-pointer 
+                      hover:bg-[#1f1f22] hover:shadow-md transition-all
+                      ${!mail.isRead ? 'bg-[#18181b] text-white font-semibold' : 'bg-[#121212] text-zinc-400'}
+                    `}
+                  >
+                    <div className="flex items-center gap-3 text-zinc-500" onClick={(e) => e.stopPropagation()}>
+                      <input type="checkbox" className="w-4 h-4 border-zinc-600 rounded bg-transparent accent-zinc-500" />
+                      <Star size={18} className="hover:text-yellow-500 cursor-pointer" />
+                    </div>
+
+                    <div className={`w-48 truncate ${!mail.isRead ? 'text-white' : 'text-zinc-300'}`}>
+                      {mail.sender}
+                    </div>
+
+                    <div className="flex-1 truncate">
+                      <span className={!mail.isRead ? 'text-white' : 'text-zinc-300'}>{mail.title}</span>
+                      <span className="text-zinc-500 ml-2">- {mail.snippet}</span>
+                    </div>
+
+                    <div className={`text-xs w-20 text-right ${!mail.isRead ? 'text-white font-bold' : 'text-zinc-500'}`}>
+                      {mail.date}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[500px] text-zinc-500">
+                  <div className="bg-zinc-800 p-6 rounded-full mb-4">
+                     {activeTab === "Starred" ? <Star size={40} /> : <Send size={40} />}
+                  </div>
+                  <p className="text-lg">Your {activeTab} is empty.</p>
+                  <p className="text-sm text-zinc-600">No messages to show here.</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </div>
   );
 }
 
-// Komponen NavItem yang sudah di-update
 function NavItem({ icon, label, isActive, onClick, count, isOpen }: any) {
   return (
     <div 
       onClick={onClick}
       className={`
         flex items-center cursor-pointer transition-all duration-200
-        ${isOpen 
-          ? 'px-6 py-2 rounded-r-full mr-4 justify-between' // Mode Lebar
-          : 'justify-center py-3 w-12 h-12 rounded-full mx-auto' // Mode Kecil (Lingkaran)
-        }
-        ${isActive 
-          ? 'bg-[#36373A] text-white font-bold' 
-          : 'text-zinc-400 hover:bg-[#2b2b2e]'
-        }
+        ${isOpen ? 'px-6 py-2 rounded-r-full mr-4 justify-between' : 'justify-center py-3 w-12 h-12 rounded-full mx-auto'}
+        ${isActive ? 'bg-[#36373A] text-white font-bold' : 'text-zinc-400 hover:bg-[#2b2b2e]'}
       `}
-      title={!isOpen ? label : ""} // Munculkan tooltip saat hover di mode kecil
+      title={!isOpen ? label : ""}
     >
       <div className={`flex items-center ${isOpen ? 'gap-4' : ''}`}>
         {icon}
-        {/* Text hanya muncul jika isOpen = true */}
         {isOpen && <span>{label}</span>}
       </div>
-      
-      {/* Badge Angka hanya muncul jika isOpen = true */}
       {isOpen && count && <span className="text-xs font-bold">{count}</span>}
     </div>
   )
