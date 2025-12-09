@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Background hitam sesuai desain */
 body {
   background-color: #18181b;
   color: white;

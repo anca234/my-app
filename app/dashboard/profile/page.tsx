@@ -9,26 +9,22 @@ export default function ProfilePage() {
   const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // Data Dummy User (Sesuai requirements) 
   const USER_DATA = {
     name: "Muhammad Rafliansyah",
     username: "@rafliansyah",
-    joinedDate: "October 24, 2023", // Requirement: Show user joined date 
-    avatarUrl: null // Jika null, pakai default icon
+    joinedDate: "October 24, 2023", 
+    avatarUrl: null
   };
 
   const handleLogout = () => {
-    // Di sini nanti bisa ditambahkan logic hapus session/token
     console.log("User logged out");
     
-    // Redirect user to login page 
     router.push("/"); 
   };
 
   return (
     <div className="min-h-screen w-full bg-[#121212] text-zinc-300 font-sans p-6 flex justify-center items-center">
       
-      {/* === LOGOUT CONFIRMATION MODAL === */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-white text-zinc-900 w-full max-w-sm rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -59,10 +55,8 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* === KARTU PROFIL === */}
       <div className="w-full max-w-md">
         
-        {/* Tombol Back */}
         <Link href="/dashboard" className="flex items-center text-zinc-400 hover:text-white mb-6 transition-colors gap-2 w-fit">
           <ArrowLeft size={20} />
           <span>Back to Dashboard</span>
@@ -70,12 +64,10 @@ export default function ProfilePage() {
 
         <div className="bg-[#1E1E20] rounded-2xl border border-zinc-800 overflow-hidden shadow-lg">
           
-          {/* Cover Image (Hiasan) */}
           <div className="h-32 bg-gradient-to-r from-blue-600 to-purple-600"></div>
 
           <div className="px-6 pb-8">
             
-            {/* Profile Picture  */}
             <div className="relative -mt-12 mb-4">
               <div className="w-24 h-24 rounded-full bg-[#2D2D30] border-4 border-[#1E1E20] flex items-center justify-center overflow-hidden">
                 {USER_DATA.avatarUrl ? (
@@ -86,13 +78,11 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* User Info */}
             <div className="mb-6">
               <h1 className="text-2xl font-bold text-white mb-1">{USER_DATA.name}</h1> {/* Show user name  */}
               <p className="text-zinc-500 font-medium">{USER_DATA.username}</p> {/* Show username  */}
             </div>
 
-            {/* Stats Grid */}
             <div className="grid grid-cols-2 gap mb-8">
 
               <div className="bg-[#2D2D30] p-4 rounded-xl flex items-center gap-3">
@@ -106,7 +96,6 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Logout Button  */}
             <button 
               onClick={() => setShowLogoutModal(true)}
               className="w-full flex items-center justify-center gap-2 bg-red-500/10 text-red-500 font-semibold py-3 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200"

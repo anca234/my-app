@@ -7,22 +7,18 @@ import { Eye, EyeOff } from "lucide-react";
 export default function AuthPage() {
   const router = useRouter();
 
-  // State Mode (Login vs Register)
   const [isLogin, setIsLogin] = useState(true);
 
-  // State Data Form
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // State Visibilitas Password
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Validasi Confirm Password (Khusus Register)
     if (!isLogin) {
       if (password !== confirmPassword) {
         alert("Passwords do not match!"); 
@@ -30,7 +26,6 @@ export default function AuthPage() {
       }
     }
 
-    // 2. Jika lolos validasi, lanjut masuk
     console.log("Form submitted. Redirecting...");
     router.push("/dashboard");
   };
@@ -45,7 +40,6 @@ export default function AuthPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           
-          {/* Email Field */}
           <div className="space-y-1.5">
             <label htmlFor="email" className="block text-sm font-medium text-zinc-900">
               Email
@@ -61,7 +55,6 @@ export default function AuthPage() {
             />
           </div>
 
-          {/* Password Field */}
           <div className="space-y-1.5">
             <label htmlFor="password" className="block text-sm font-medium text-zinc-900">
               Password
@@ -86,10 +79,8 @@ export default function AuthPage() {
             </div>
           </div>
 
-          {/* Confirm Password Field (Hanya Muncul Saat Sign Up) */}
           {!isLogin && (
             <div className="space-y-1.5 animate-in slide-in-from-top-2 fade-in duration-300">
-              {/* PERBAIKAN DI SINI: class diubah menjadi className */}
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-zinc-900">
                 Confirm Password
               </label>

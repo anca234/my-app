@@ -20,7 +20,7 @@ const INITIAL_DATA = [
     snippet: "Patch now available to address vulnerability...", 
     body: "Hello User,\n\nWe have released a critical security patch for Next.js versions 15 and 16. Please update your project immediately to ensure the safety of your application.\n\nRun 'npm install next@latest' to update.\n\nBest,\nVercel Security Team",
     date: "6:33 AM", 
-    isRead: false // Unread (Teks Tebal & Putih)
+    isRead: false
   },
   { 
     id: 2, 
@@ -32,7 +32,7 @@ const INITIAL_DATA = [
     snippet: "The new dual-combat form character 'Durin'...", 
     body: "Traveler! \n\nPaimon has great news! Version Luna III is finally here. Log in now to claim your free outfit and 1600 Primogems.\n\nSee you in Teyvat!",
     date: "11:55 PM", 
-    isRead: true // Unread (Teks Tebal & Putih)
+    isRead: true 
   },
   { 
     id: 3, 
@@ -44,7 +44,7 @@ const INITIAL_DATA = [
     snippet: "Creative mind line up! we are searching for your talent...", 
     body: "Hi there,\n\nBased on your profile, we think you might be a good fit for this position at Orang Tua Group.\n\nApply now before it closes.",
     date: "Dec 1", 
-    isRead: false // Read (Teks Abu-abu)
+    isRead: false
   },
   { 
     id: 4, 
@@ -61,7 +61,7 @@ const INITIAL_DATA = [
   { 
     id: 5, 
     folder: "inbox",
-    isStarred: true, // Starred
+    isStarred: true,
     sender: "Tokopedia", 
     email: "no-reply@tokopedia.com",
     title: "Pembayaran Berhasil: Invoice INV/2025/12/01/XX", 
@@ -80,7 +80,7 @@ const INITIAL_DATA = [
     snippet: "See what you listened to most this year. It might surprise you...", 
     body: "It's that time of the year again!\n\nYour 2025 Wrapped is ready. Find out your top songs, top artists, and how many minutes you spent listening to music this year.\n\n#SpotifyWrapped",
     date: "Nov 29", 
-    isRead: false // Unread
+    isRead: false
   },
   { 
     id: 7, 
@@ -137,29 +137,24 @@ export default function DashboardPage() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<any | null>(null);
   
-  // State Data Email
   const [emails, setEmails] = useState(INITIAL_DATA);
   
-  // 1. STATE BARU: Menyimpan ID email yang dicentang
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const [composeDefaultData, setComposeDefaultData] = useState<{to: string, subject: string, body?: string} | null>(null);
 
-  // --- LOGIC: SELECT CHECKBOX ---
   const toggleSelection = (id: number) => {
     setSelectedIds((prev) => 
       prev.includes(id) 
-        ? prev.filter((itemId) => itemId !== id) // Jika sudah ada, hapus (uncheck)
-        : [...prev, id] // Jika belum ada, tambahkan (check)
+        ? prev.filter((itemId) => itemId !== id)
+        : [...prev, id]
     );
   };
 
-  // --- LOGIC: DELETE SELECTED (BULK DELETE) ---
   const handleBulkDelete = () => {
     if (confirm(`Are you sure you want to delete ${selectedIds.length} emails?`)) {
-      // Hapus email yang ID-nya ada di dalam array selectedIds
       setEmails((prev) => prev.filter((email) => !selectedIds.includes(email.id)));
-      setSelectedIds([]); // Reset seleksi
+      setSelectedIds([]);
     }
   };
 
@@ -252,7 +247,6 @@ export default function DashboardPage() {
           </Link>
         </header>
 
-        {/* TOOLBAR BULK ACTION (Muncul jika ada email yang dipilih) */}
         {!selectedEmail && selectedIds.length > 0 && (
           <div className="h-12 flex items-center px-4 bg-[#1E1E20] border-b border-zinc-700 animate-in slide-in-from-top-2">
             <span className="text-sm text-white font-semibold mr-6">{selectedIds.length} selected</span>
@@ -274,7 +268,6 @@ export default function DashboardPage() {
 
         <div className="flex-1 overflow-y-auto">
           {selectedEmail ? (
-            // === DETAIL VIEW ===
             <div className="flex flex-col h-full bg-[#121212]">
               <div className="flex items-center px-4 py-3 border-b border-zinc-800 gap-4 text-zinc-400">
                 <button onClick={() => setSelectedEmail(null)} className="hover:text-white p-2 hover:bg-zinc-800 rounded-full"><ArrowLeft size={20} /></button>
@@ -318,29 +311,25 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            // === LIST VIEW ===
             <div>
               {displayedEmails.length > 0 ? (
                 displayedEmails.map((mail) => (
                   <div 
                     key={mail.id} 
                     onClick={() => {
-                      // Mark as read saat dibuka
                       setEmails(prev => prev.map(e => e.id === mail.id ? {...e, isRead: true} : e));
                       setSelectedEmail(mail);
                     }}
-                    // 2. STYLE LOGIC: BEDA GAYA UNTUK UNREAD & READ
                     className={`
                       group flex items-center gap-4 px-4 py-3 border-b border-zinc-800 cursor-pointer hover:shadow-md transition-all
                       ${!mail.isRead 
-                        ? 'bg-[#202124] text-white' // UNREAD: Background agak terang, Teks Putih
-                        : 'bg-[#121212] text-zinc-400' // READ: Background Gelap, Teks Abu
+                        ? 'bg-[#202124] text-white'
+                        : 'bg-[#121212] text-zinc-400'
                       }
                       ${selectedIds.includes(mail.id) ? 'bg-[#323639]' : ''} // Highlight jika dicentang
                     `}
                   >
                     <div className="flex items-center gap-3 text-zinc-500" onClick={(e) => e.stopPropagation()}>
-                      {/* CHECKBOX SEKARANG BERFUNGSI */}
                       <input 
                         type="checkbox" 
                         checked={selectedIds.includes(mail.id)}
@@ -350,12 +339,10 @@ export default function DashboardPage() {
                       <Star size={18} onClick={() => toggleStar(mail.id)} className={`cursor-pointer transition-colors ${mail.isStarred ? 'text-yellow-400 fill-yellow-400' : 'hover:text-zinc-300'}`} />
                     </div>
 
-                    {/* Sender: Bold jika Unread */}
                     <div className={`w-48 truncate ${!mail.isRead ? 'font-bold text-white' : 'font-normal text-zinc-300'}`}>
                       {mail.sender}
                     </div>
 
-                    {/* Subject: Bold & Putih jika Unread */}
                     <div className="flex-1 truncate">
                       <span className={!mail.isRead ? 'font-bold text-white' : 'font-normal text-zinc-300'}>
                         {mail.title}
@@ -363,7 +350,6 @@ export default function DashboardPage() {
                       <span className="text-zinc-500 ml-2 font-normal">- {mail.snippet}</span>
                     </div>
 
-                    {/* Date: Bold jika Unread */}
                     <div className={`text-xs w-20 text-right ${!mail.isRead ? 'font-bold text-white' : 'font-normal text-zinc-500'}`}>
                       {mail.date}
                     </div>
